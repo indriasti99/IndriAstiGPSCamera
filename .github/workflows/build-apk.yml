@@ -4,13 +4,11 @@ name: Build Indri Asti GPS Camera APK
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,7 +34,12 @@ jobs:
         run: |
           unzip -o IndriAstiGPS-Android-Studio-Project.zip -d source
           test -f source/IndriAstiGPS-Android/settings.gradle.kts
-          test -f source/IndriAstiGPS-Android/app/src/main/java/id/indriasti/gpscamera/MainActivity.kt
+
+      - name: Fix geolocation Kotlin code
+        run: |
+          FILE="source/IndriAstiGPS-Android/app/src/main/java/id/indriasti/gpscamera/MainActivity.kt"
+          sed -i 's/geolocationEnabled = true/setGeolocationEnabled(true)/' "$FILE"
+          grep -n 'setGeolocationEnabled(true)' "$FILE"
 
       - name: Build debug APK
         working-directory: source/IndriAstiGPS-Android

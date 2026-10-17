@@ -34,7 +34,11 @@ jobs:
 
       - name: Extract Android project
         run: |
-          unzip -o IndriAstiGPS-Android-Studio-Project.zip -d source
+          unzip
+                - name: Fix Kotlin error
+        run: |
+          sed -i 's/geolocationEnabled = true/setGeolocationEnabled(true)/' source/IndriAstiGPS-Android/app/src/main/java/id/indriasti/gpscamera/MainActivity.kt
+          -o IndriAstiGPS-Android-Studio-Project.zip -d source
           test -f source/IndriAstiGPS-Android/settings.gradle.kts
 
       - name: Build debug APK
